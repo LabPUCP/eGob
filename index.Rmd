@@ -1,0 +1,305 @@
+<img src="https://github.com/ERMPeru/elecciones2016/raw/master/headerLogo.png" width="1000">
+
+
+## Municipalidades Distritales de Lima Metropolitana: avances en Gobierno Electrónico 
+
+#### Elaborado por el [Laboratorio de Políticas Públicas de la PUCP](#team)
+
+-----
+El Gobierno Electrónico es el uso de TICs para apoyar las operaciones del gobierno, incluir a los ciudadanos en la toma de decisiones y proporcionar servicios públicos. 
+
+El objetivo de este ejercicio fue caracterizar el nivel de desarrollo de las municipalidades de acuerdo a la metodología propuesta por **Paiva y Costa (2013)**. Se evaluaron los avances de las municipalidades en tres aspectos: a) Acceso a la información, b) servicios públicos, y c) participación ciudadana. 
+
+### Evaluación general
+
+```{r packs,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE, results='hide'}
+#suppressPackageStartupMessages()
+library(dplyr)
+library(maptools)  
+library(rgeos)
+library(rgdal)
+library(sf)
+library(reshape2)
+library(ggplot2) 
+library(tmap)
+library(maps)
+library(plotrix)
+library(scales)
+library(stargazer)
+library(knitr)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+data=read.csv("dataMuniFinal.csv")
+```
+
+```{r maps,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE,results='hide'}
+limaborde=rgdal::readOGR("LimaBorde.shp")
+limaframe=rgdal::readOGR("Lima.shp")
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+data$ID = as.character(data$ID)
+str(data$ID)
+```
+
+```{r mergeMapSubSet,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+plgs  <- merge(limaframe, data, by="ID") 
+```
+
+```{r diffdis1,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE,fig.show='hold',fig.width=10,fig.height=8}
+library(maps)
+
+par(mar=c(1, 1, 2, 0))
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+
+# INFORMACIÓN PUBLICA
+info_1 = plgs[!is.na(plgs$Informacion) &  plgs$Informacion == 1,]
+info_2 = plgs[!is.na(plgs$Informacion) & plgs$Informacion == 2,]
+info_3 = plgs[!is.na(plgs$Informacion) &  plgs$Informacion == 3,]
+info_4 = plgs[!is.na(plgs$Informacion) & plgs$Informacion == 4,]
+
+
+
+plot(limaborde, main="eGob: Acceso a la informacion",cex.main=2)
+plot(info_1,col='grey',lty=0,add = TRUE,border=NA)
+plot(info_2,col='palevioletred1',lty=0,add = TRUE,border=NA)
+plot(info_3,col='orange',lty=0,add = TRUE,border=NA)
+plot(info_4,col='seagreen1',lty=0,add = TRUE,border=NA)
+
+legend(x=-76.56,y=-11.99,
+       title='',
+       legend=c(paste0("Resalta:",nrow(info_4)),
+                paste0("Avance: ",nrow(info_3)),
+                paste0("Débil: ",nrow(info_2)),
+                paste0("Muy débil: ",nrow(info_1))
+                ),
+       fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
+
+
+# SERVICIOS PUBLICOS
+info_1 = plgs[!is.na(plgs$Servicios) &  plgs$Servicios == 1,]
+info_2 = plgs[!is.na(plgs$Servicios) &  plgs$Servicios == 2,]
+info_3 = plgs[!is.na(plgs$Servicios) &  plgs$Servicios == 3,]
+info_4 = plgs[!is.na(plgs$Servicios) & plgs$Servicios == 4,]
+
+plot(limaborde, main="eGob: Servicios Publicos",cex.main=2)
+plot(info_1,col='grey',lty=0,add = TRUE,border=NA)
+plot(info_2,col='palevioletred1',lty=0,add = TRUE,border=NA)
+plot(info_3,col='orange',lty=0,add = TRUE,border=NA)
+plot(info_4,col='seagreen1',lty=0,add = TRUE,border=NA)
+
+legend("right",
+       title='',
+      legend=c(paste0("Resalta:",nrow(info_4)),
+                paste0("Avance: ",nrow(info_3)),
+                paste0("Débil: ",nrow(info_2)),
+                paste0("Muy débil: ",nrow(info_1))
+                ),
+       fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
+
+# PARTICIPACION CIUDADANA 
+info_1 = plgs[!is.na(plgs$Participacion) &  plgs$Participacion == 1,]
+info_2 = plgs[!is.na(plgs$Participacion) &  plgs$Participacion == 2,]
+info_3 = plgs[!is.na(plgs$Participacion) &  plgs$Participacion == 3,]
+info_4 = plgs[!is.na(plgs$Participacion) & plgs$Participacion == 4,]
+
+plot(limaborde, main="eGob: Participacion ciudadana",cex.main=2)
+plot(info_1,col='grey',lty=0,add = TRUE,border=NA)
+plot(info_2,col='palevioletred1',lty=0,add = TRUE,border=NA)
+plot(info_3,col='orange',lty=0,add = TRUE,border=NA)
+plot(info_4,col='seagreen1',lty=0,add = TRUE,border=NA)
+
+legend("right",
+       title='',
+       legend=c(paste0("Resalta:",nrow(info_4)),
+                paste0("Avance: ",nrow(info_3)),
+                paste0("Débil: ",nrow(info_2)),
+                paste0("Muy débil: ",nrow(info_1))
+                ),
+       fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
+
+```
+
+### A. **Acceso a la información:** 
+
+Capacidad de la Municipalidad de proveer a sus ciudadanos, en su pg web, de acceso a información genérica sobre la Municipalidad y acceso a documentos públicos a través de búsquedas personalizadas. 
+
+Las Municipalidades que más han desarrollado esta dimensión, obteniendo el puntaje máximo de la evaluación, son:
+
+```{r echo=FALSE}
+i1 = data[data$Informacion == 4, 2:3]
+row.names(i1) = i1$Nombre
+i1 = i1[-1]
+kable(i1, format = "html")
+##
+```
+
+
+Las Municipalidades que menos han desarrollado esta dimensión, obteniendo dos puntos en la evaluación, son:
+
+```{r echo=FALSE}
+i2 = data[data$Informacion == 2, 2:3]
+row.names(i2) = i2$Nombre
+i2 = i2[-1]
+kable(i2, format = "html")
+```
+
+
+
+### B. **Servicios Públicos**:  
+Capacidad de la Municipalidad para, a través de su página web, proveer de información a sus ciudadanos sobre los servicios que ofrece, el llenado de formularios de manera virtual y la posibilidad de solicitar y completar la entrega de un servicio público online.
+
+Las Municipalidades que más han desarrollado esta dimensión, obteniendo el puntaje máximo de la evaluación, son:
+
+```{r echo=FALSE}
+d = data[data$Servicios == 4, c(2,4)]
+row.names(d) = d$Nombre
+d = d[-1]
+kable(d, format = "html")
+```
+
+
+Las Municipalidades que menos han desarrollado esta dimensión, obteniendo un punto en la evaluación, son:
+
+```{r echo=FALSE}
+d = data[data$Servicios == 1, c(2,4)]
+row.names(d) = d$Nombre
+d = d[-1]
+kable(d, format = "html")
+```
+
+
+### C. **Participación Ciudadana:** 
+
+Posibilidad de que el ciudadano, de forma virtual, pueda enviar quejas y/o comentarios, sobre temas relevante en materia de política, así como participar en encuestas de opinión, formar parte de espacios de discusión pública y contribuir con los presupuestos participativos de su respectiva Municipalidad.
+
+Se encontró que las Municipalidades evaluadas han desarrollado poco esta dimensión, obteniendo un máximo de 2 puntos. Las Municipalidades con el puntaje más alto son: 
+
+```{r echo=FALSE}
+d = data[data$Participacion == 2, c(2,5)]
+row.names(d) = d$Nombre
+d = d[-1]
+kable(d, format = "html")
+```
+
+
+Destaca, además, que la Municipalidad de Chorrillos no obtuvo ningún punto en la evaluación. 
+
+```{r echo=FALSE}
+d = data[data$Participacion == 0, c(2,5)]
+row.names(d) = d$Nombre
+d = d[-1]
+kable(d, format = "html")
+```
+
+
+### Resumen de la evaluación 
+
+El siguiente gráfico resume la evaluación de todos los distritos:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+
+p <- plot_ly(
+    type = 'scatterpolar',
+    fill = 'toself'
+  ) %>%
+  add_trace(
+    r = data$Informacion,
+    theta = data$Codigo,
+    name = 'Informacion'
+  ) %>%
+  add_trace(
+    r = data$Servicios,
+    theta = data$Codigo,
+    name = 'Servicios'
+  ) %>%
+  add_trace(
+    r = data$Participacion,
+    theta = data$Codigo,
+    name = 'Participacion'
+  ) %>%
+  layout(
+    polar = list(
+      radialaxis = list(
+        visible = T,
+        range = c(0,4)
+      )
+    )
+  )
+p
+```
+
+Los detalles sobre la metodología se presentan en los anexos. 
+
+<br></br>
+------
+
+------
+
+<br></br>
+
+### Anexos 
+
+#### Anexo 1: Descripción de metodología
+
+**Dimensión de Acceso a Información**
+
+- Fase 1 (1 punto): La página provee de información genérica sobre la Municipalidad (por ejemplo, el horario de atención, los miembros del Concejo Municipal, la dirección, entre otros).
+- Fase 2 (2 puntos): Hay acceso a documentos públicos, los cuales pueden ser visualizados y descargados sin la necesidad de algún tipo de autentificación (por ejemplo, el presupuesto municipal).
+- Fase 3 (3 puntos): La página web tiene una función de búsqueda, la cual permite encontrar la información que se encuentra en los documentos de la fase anterior con mayor facilidad.
+- Fase 4 (4 puntos): La página web permite parametrizar la búsqueda, basándose en las características del documento solicitado (por ejemplo, el tipo de documento, el título, la fecha de publicación, entre otros). Cumplir con esta fase asume que las fases anteriores también han sido cumplidas.
+
+**Dimensión de Servicios Públicos**
+
+- Fase 1 (1 punto): La página web provee de información sobre servicios específicos que son ofrecidos por la Municipalidad (por ejemplo, ordenanzas, regulaciones, normas de uso, entre otros).
+- Fase 2 (2 puntos): La página web provee funciones que permiten a los ciudadanos ver el estado de los servicios que han solicitado.
+- Fase 3 (3 puntos): La página web provee funciones que permiten a los ciudadanos el llenado de formularios de manera electrónica, a pesar de que la formalización de los requisitos amerite interacción presencial posterior.
+- Fase 4 (4 puntos): La página web provee funciones que permiten a los ciudadanos solicitar y completar la entrega de servicios públicos de forma electrónica. Cumplir con esta fase asume que las fases anteriores también han sido cumplidas.
+
+**Dimensión de Participación**
+
+- Fase 1 (Puntaje 1): La página web provee de funciones que le permiten a los ciudadanos enviar sugerencias y/o quejas, con o sin identificación.
+- Fase 2 (Puntaje 2): La página web brinda la posibilidad de participar en encuestas de opinión y/o espacios de discusión sobre temas relacionados a áreas de política de la Municipalidad, con o sin identificación.
+- Fase 3 (Puntaje 3): La página web permite la posibilidad de participar en procesos de discusión pública, con obligatoria consideración o respuesta por parte del Municipio.
+- Fase 4 (Puntaje 4): Existe la posibilidad de contribuir en los procesos de toma de decisiones de los presupuestos participativos.
+
+**Nota:** No se incluyeron en la evaluación a las municipalidades de Ancón, Carabayllo y Chosica, en tanto sus portales web no estuvieron disponibles durante el periodo de análisis (del 15/10/18 al 05/11/18). 
+
+#### Anexo 2: Resultados de la Evaluación
+
+En el siguiente [enlace](https://drive.google.com/file/d/1zKLQ1dUyuz-JB6eNdgHkCQXnfutjV9CN/view?usp=sharing) se podrá acceder a las pg webs que fueron evaluadas. 
+
+<br></br>
+
+------
+
+<br></br>
+
+### Bibliografia
+
+G. Paiva y M. Costa (2013), "Significant socio-economic factors for local e-government development in Portugal".
+
+G. Paiva y H. Gomes (2014), "Evolution of local e-government maturity in Portugal". 
+
+
+------
+
+------
+
+<a id='team'></a>
+
+**El equipo del LabPUCP está conformado por:**
+
+Director: Dr. José Manuel Magallanes
+
+Investigadoras Senior: 
+
+* Lic. María Gracia Becerra.
+* Lic. Gretell Minaya. 
+
+Investigador Junior: 
+
+* Alexander Benites.
+ 

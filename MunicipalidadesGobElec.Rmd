@@ -1,5 +1,9 @@
-##Municipalidades Distritales de Lima: avances en Gobierno Electrónico 
-#### Elaborado por el Laboratorio de Políticas Públicas de la Escuela de Gobierno^[Equipo: María Gracia Becerra, Gretell Minaya y Alexander Benites]. 
+<img src="https://github.com/ERMPeru/elecciones2016/raw/master/headerLogo.png" width="1000">
+
+# Municipalidades Distritales de Lima Metropolitana: avances en Gobierno Electrónico 
+
+#### Elaborado por el [Laboratorio de Políticas Públicas de la PUCP](#team)
+
 
 El Gobierno Electrónico es el uso de TICs para apoyar las operaciones del gobierno, incluir a los ciudadanos en la toma de decisiones y proporcionar servicios públicos. 
 
@@ -233,5 +237,18 @@ G. Paiva y M. Costa (2013), "Significant socio-economic factors for local e-gove
 
 G. Paiva y H. Gomes (2014), "Evolution of local e-government maturity in Portugal". 
 
+<a id='team'></a>
 
+**El equipo del LabPUCP está conformado por:**
+
+Director: Dr. José Manuel Magallanes
+
+Investigadoras Senior: 
+
+* Lic. María Gracia Becerra.
+* Lic. Gretell Minaya. 
+
+Investigador Junior: 
+
+* Alexander Benites.
  
