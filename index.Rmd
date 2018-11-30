@@ -123,7 +123,7 @@ legend("right",
 
 ### A. **Acceso a la información:** 
 
-Capacidad de la Municipalidad de proveer a sus ciudadanos, en su pg web, de acceso a información genérica sobre la Municipalidad y acceso a documentos públicos a través de búsquedas personalizadas. 
+Capacidad de la Municipalidad de proveer a sus ciudadanos, en su página web, de acceso a información genérica sobre la Municipalidad y acceso a documentos públicos a través de búsquedas personalizadas. 
 
 Las Municipalidades que más han desarrollado esta dimensión, obteniendo el puntaje máximo de la evaluación, son:
 
@@ -232,6 +232,186 @@ p
 ```
 
 Los detalles sobre la metodología se presentan en los anexos. 
+
+
+### Regresiones
+
+La finalidad de este ejercicio fue determinar cuáles son las características socioeconómicas de los distritos que impactan en el nivel de desarrollo de Gobierno Electrónico de sus respectivas Municipalidades. Para cumplir dicho objetivo, y siguiendo la metodología propuesta por **Paiva y Costa (2013)**, fueron escogidas 13 variables socioeconómicas independientes y una variable dependiente denominada *develop*. Esta última es un agregado de las tres dimensiones de análisis sobre el nivel de Gobierno Electrónico mencionadas anterioremente. Así, cada Municipio obtuvo un puntaje final que oscila en un rango de 0 a 12 puntos. La información fue recogida del Portal de Transparencia Económica del Ministerio de Economía y Finanzas (MEF) y de los resultados del último censo, realizado por el Instituto Nacional de Estadística e Informática (INEI). A continuación se presentarán las variables explicativas y los resultados del análisis:
+
+- *Illiteracy%*: Porcentaje de la población en el distrito mayor a 15 años que no sabe leer ni escribir
+- *Ngrade%*: Porcentaje de la población en el distrito con nivel educativo menor al nivel secundario
+- *Highte%*: Porcentaje de la población en el distrito con grado educativo superior
+- *Ageavg*: Promedio de la edad de los residentes del distrito
+- *Abstent*: Porcentaje de electores hábiles en el distrito que no votaron en las últimas ERM
+- *Phone%*: Porcentaje de la población en el distrito que tiene telefono celular
+- *Attract%*: Porcentaje de la población que hace 5 años NO vivía en ese distrito
+- *Pop*: Población del distrito en el año 2017
+- *Taxes*: Presupuesto directamente recaudado por la Municipalidad al cierre del año 2017
+- *Reven_2017*: Presupuesto Inicial Modificiado del año 2017
+- *Reven_2018*: Presupuesto Inicial Modificiado del año 2018
+- *Expens*: Devengado al cierre del año 2017
+- *Hrexp*: Gastos de la Municipalidad en el personal y obligaciones sociales
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniSub = data[,c(2:5)]
+```
+
+```{r ConstruyendoDependiente,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniSub$develop = dataMuniSub$Informacion+dataMuniSub$Servicios+dataMuniSub$Participacion
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+row.names(dataMuniSub) = dataMuniSub$Nombre
+dataMuniSub[2:5] <- as.data.frame(lapply(dataMuniSub[2:5], as.numeric))
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+library(openxlsx)
+folder='data'
+fileName='eGob.xlsx'
+fileToRead=file.path(folder,fileName)
+dataIndependientes=read.xlsx(fileToRead)
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataIndependientes = dataIndependientes[,-c(15)]
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF = merge(dataMuniSub, dataIndependientes, by = "Nombre", all.x = T, all.y = F)
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF$Reven_2018 <- as.numeric(gsub(",","",dataMuniF$Reven_2018))
+dataMuniF$Reven_2017 <- as.numeric(gsub(",","",dataMuniF$Reven_2017))
+dataMuniF$Expens <- as.numeric(gsub(",","",dataMuniF$Expens))
+dataMuniF$Hrexp <- as.numeric(gsub(",","",dataMuniF$Hrexp))
+dataMuniF$Taxes <- as.numeric(gsub(",","",dataMuniF$Taxes))
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF$Pop <- as.numeric(gsub(" ","",dataMuniF$Pop))
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF$Reven_2018 = as.numeric(dataMuniF$Reven_2018)
+dataMuniF$Reven_2017 = as.numeric(dataMuniF$Reven_2017)
+dataMuniF$Expens = as.numeric(dataMuniF$Expens)
+dataMuniF$Hrexp = as.numeric(dataMuniF$Hrexp)
+dataMuniF$Pop = as.numeric(dataMuniF$Pop)
+dataMuniF$Taxes = as.numeric(dataMuniF$Taxes)
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF[12:18] <- as.data.frame(lapply(dataMuniF[12:18], as.numeric))
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+row.names(dataMuniF) = dataMuniF$Nombre
+dataMuniF = dataMuniF[,-c(1)]
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF=dataMuniF[,-c(1:3)]
+```
+
+Del total de variables mencionadas, se seleccionaron solo aquellas que se encontraban estadísticamente correlacionadas con la variable dependiente (*develop*). Así, el número de variables independientes se redujo a 10, las cuales serán presentadas a continuación:
+
+- *Reven_2017*
+- *Reven_2018*
+- *Expens*
+- *Hrexp*
+- *Taxes*
+- *Illiteracy%*
+- *Abstent%*
+- *Highte%*
+- *Ngrade%*
+- *Ageavg*
+
+Los resultados del análisis pueden observarse en la matriz de correlación:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library("PerformanceAnalytics")
+chart.Correlation(dataMuniF, histogram=TRUE, pch=19)
+```
+
+Siguiendo la metodología propuesta por **Paiva y Costa (2013)**, para evitar problemas de colinealidad, cuando dos o más variables independientes se encontraban fuertemente correlacionadas (obtuvieron un coeficiente de correlación de Pearson mayor a 0.8), solo la variable más correlacionada con *develop* fue incluida en los análisis de regresión. En ese sentido, las variables que obtuvieron coeficientes de correlación mayores a 0.8 fueron las siguientes:
+
+- *Reven_2017* y *Reven_2018* (r = 0.98) 
+- *Reven_2017* y *Expens* (r = 0.99) 
+- *Taxes* y *Expens* (r = 0.85) 
+- *Taxes* y *Reven_2017* (r = 0.83) T
+- *Taxes* y *Reven_2018* (0.85) 
+- *Highte%* y *Abstent%* (r = 0.84) 
+- *Ngrade%* e *Illiteracy* (r = 0.99) 
+- *Ageavg* y *Highte%* (r = 0.96) 
+- *Ageavg* y *Abstent%* (r = 0.83) 
+
+Según los resultados observados, las variables que entran en el modelo de regresión son las siguientes: *Taxes* y *Ageavg*. A continuación se presentarán los resultados de los análisis de regresión.
+
+
+### A. Modelo de regresión lineal
+
+El primer análisis es un modelo de regresión lineal. Los resultados muestran que solo *Taxes* tiene un impacto significativo y positivo en el nivel de desarrollo de Gobierno Electrónico del Municipio.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+modelo1=glm(develop~Taxes + Ageavg,data=dataMuniF,family ="gaussian")
+summary(modelo1)
+```
+
+El promedio de los residuos es bastante cercano a 0: -0.000000000000000273
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+mean(modelo1$residuals)
+```
+
+Exite homocedasticidad. Los casos influyentes son la Municipalidad de Chorrillos, la Municipalidad de Santiago de Surco y la Municipalidad de Los Olivos.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+par(mfrow=c(2,2))
+plot(modelo1)
+```
+
+Correlación entre variables independientes y residuos:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+for (var in dataMuniF[-7]){
+  var= as.numeric(var)
+  corr=cor.test(modelo1$residuals,var)
+  print(corr$p.value)
+}
+```
+
+Hay normalidad:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+shapiro.test(modelo1$residuals)
+
+x <- modelo1$residuals 
+h<-hist(x) 
+xfit<-seq(min(x),max(x),length=40) 
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x)) 
+yfit <- yfit*diff(h$mids[1:2])*length(x) 
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+
+### B. Modelo de regresión beta
+
+El segundo análisis es un modelo de regresión beta. Los resultados de este último modelo muestran que tanto *Taxes* como *Ageavg* tienen impactos significativos en el nivel de desarrollo de Gobierno Electrónico del Municipio. 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
+dataMuniF$develop = dataMuniF$develop/100
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(betareg)
+modelo=betareg(develop~ Taxes + Ageavg,
+            data=dataMuniF)
+summary(modelo)
+```
+
+
 
 <br></br>
 ------
