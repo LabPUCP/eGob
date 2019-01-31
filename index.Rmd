@@ -71,8 +71,8 @@ legend(x=-76.56,y=-11.99,
        title='',
        legend=c(paste0("Resalta:",nrow(info_4)),
                 paste0("Avance: ",nrow(info_3)),
-                paste0("Débil: ",nrow(info_2)),
-                paste0("Muy débil: ",nrow(info_1))
+                paste0("Debil: ",nrow(info_2)),
+                paste0("Muy debil: ",nrow(info_1))
                 ),
        fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
 
@@ -93,8 +93,8 @@ legend("right",
        title='',
       legend=c(paste0("Resalta:",nrow(info_4)),
                 paste0("Avance: ",nrow(info_3)),
-                paste0("Débil: ",nrow(info_2)),
-                paste0("Muy débil: ",nrow(info_1))
+                paste0("Debil: ",nrow(info_2)),
+                paste0("Muy debil: ",nrow(info_1))
                 ),
        fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
 
@@ -114,8 +114,8 @@ legend("right",
        title='',
        legend=c(paste0("Resalta:",nrow(info_4)),
                 paste0("Avance: ",nrow(info_3)),
-                paste0("Débil: ",nrow(info_2)),
-                paste0("Muy débil: ",nrow(info_1))
+                paste0("Debil: ",nrow(info_2)),
+                paste0("Muy debil: ",nrow(info_1))
                 ),
        fill=c('seagreen1','orange',"palevioletred1","grey"),cex=1,bty = "n")
 
@@ -303,7 +303,7 @@ dataMuniF$Taxes = as.numeric(dataMuniF$Taxes)
 ```
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
-dataMuniF[12:18] <- as.data.frame(lapply(dataMuniF[12:18], as.numeric))
+dataMuniF <- as.data.frame(lapply(dataMuniF, as.numeric))
 ```
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,eval=TRUE}
